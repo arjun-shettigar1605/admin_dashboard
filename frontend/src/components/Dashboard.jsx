@@ -1,0 +1,29 @@
+import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import Header from "./Header";
+import ProjectTable from "./ProjectTable";
+import ProjectChart from "./ProjectChart";
+import SummaryCards from "./SummaryCards";
+
+const Dashboard = () => {
+  const [activeMenuItem, setActiveMenuItem] = useState("dashboard");
+
+  return (
+    <div className="dashboard-layout">
+      <Sidebar activeItem={activeMenuItem} setActiveItem={setActiveMenuItem} />
+      <div className="main-content">
+        <Header />
+        <div className="content-area">
+          <ProjectTable />
+          {/* CORRECTED: Changed className to "bottom-content" to match the CSS */}
+          <div className="bottom-content">
+            <ProjectChart />
+            <SummaryCards />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
