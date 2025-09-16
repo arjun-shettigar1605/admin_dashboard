@@ -304,280 +304,149 @@ left: 0;
 }
 
 /* Table */
+/* New Table Styles */
 .table-container {
-  overflow-x: auto; /* This is essential for wide tables */
-  width: 100%; /* Ensure container takes full width */
+  overflow-x: auto;
 }
 
 .project-table {
-  width: 100%; /* Table itself tries to fill its container */
-  min-width: 900px; /* Added a min-width to prevent squashing on very small screens,
-                      if the content demands more space, overflow-x: auto will kick in */
+  width: 100%;
   border-collapse: collapse;
 }
 
-.project-table th,
-.project-table td {
-  padding: 16px 12px;
+.project-table thead th {
+  background: #4a4e57; /* Using color2 */
+  color: #ffffff; /* Using color3 */
+  padding: 16px;
   text-align: left;
-  border-bottom: 1px solid #f0f2f5;
-  color: #2d3748;
-  font-size: 14px;
-  /* Re-added white-space nowrap selectively for headers, but rely on min-width and overflow-x for overall table */
-  /* If table content is long, it will cause horizontal scroll, not break layout */
-}
-.project-table th {
-  color: #718096;
   font-weight: 600;
-  white-space: nowrap; /* Keep headers on one line */
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
-.project-table td {
-  white-space: normal; /* Allow cell content to wrap */
-}
-
-
-.project-table tr:hover {
-  background: #f7fafc;
-}
-
-.view-project-btn {
-  background: #6f64c2;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
+.project-table thead th.sortable {
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap; /* Keep button text on one line */
+  transition: background-color 0.2s ease;
+}
+.project-table thead th.sortable:hover {
+  background-color: #5a5e68;
 }
 
-.view-project-btn:hover {
-  background: #5a50a3;
+.sort-indicator {
+  margin-left: 8px;
+  font-size: 10px;
+  opacity: 0.7;
 }
 
+.project-table tbody tr {
+  border-bottom: 1px solid #f0f2f5;
+  transition: background-color 0.2s ease;
+}
+
+.project-table tbody tr:hover {
+  background-color: #fafbff;
+}
+
+.project-table tbody td {
+  padding: 16px;
+  font-size: 14px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
 
 /* Progress Bar */
-.progress-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .progress-bar {
-  width: 80px;
-  height: 6px;
+  width: 100px;
+  height: 8px;
   background: #e2e8f0;
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: #00ccd9;
-  transition: width 0.3s ease;
+  background: #00ccd9; /* Using color1 */
+  border-radius: 4px;
 }
 
-.progress-text {
-  font-size: 12px;
-  color: #718096;
-  min-width: 30px;
-  white-space: nowrap;
-}
-
-/* Status */
+/* Status (Original colors preserved) */
 .status {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
+}
+.status-completed { background: #dcfce7; color: #166534; }
+.status-progress { background: #fef3c7; color: #92400e; }
+.status-rejected { background: #fee2e2; color: #991b1b; }
+
+/* View Project Button */
+.view-project-btn {
+  background: transparent;
+  color: #00ccd9;
+  border: 2px solid #00ccd9;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-.status-completed {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.status-progress {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status-rejected {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-
-/* Chart Container */
-.chart-container {
-  background: #80838a;
-  border-radius: 16px;
-  padding: 24px;
-  color: white;
-  position: relative;
-  overflow: hidden;
-}
-
-.chart-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);
-  z-index: -1;
-}
-
-.chart-header h3 {
-  font-size: 20px;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.chart-content {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  flex-wrap: wrap; /* Allow chart internal elements to wrap */
-  justify-content: center; /* Center content when wrapped */
-}
-
-.circle-chart {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: conic-gradient(
-    #10ac84 0deg 223deg,
-    #ffd32a 223deg 295deg,
-    #ff3838 295deg 360deg
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  flex-shrink: 0; /* Prevent chart from shrinking too much */
-}
-
-.circle-inner {
-  width: 80px;
-  height: 80px;
-  background: #80838a;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.chart-number {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.chart-label {
-  font-size: 12px;
-  opacity: 0.9;
-}
-
-.chart-legend {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex-grow: 1; /* Allow legend to take available space */
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.legend-dot.complete {
-  background: #10ac84;
-}
-
-.legend-dot.pending {
-  background: #ffd32a;
-}
-
-.legend-dot.not-started {
-  background: #ff3838;
-}
-
-/* Summary Section */
-.summary-section {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-.summary-section h3 {
-  font-size: 18px;
-  color: #2d3748;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.summary-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.summary-card {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background: #f7fafc;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.summary-card:hover {
-  background: #edf2f7;
+.view-project-btn:hover {
+  background: #00ccd9;
+  color: #ffffff;
   transform: translateY(-1px);
 }
 
-.card-icon {
-  font-size: 24px;
-  margin-right: 16px;
-  flex-shrink: 0; /* Prevent icon from shrinking */
-}
-
-.card-content {
+/* New Pagination Styles */
+.pagination-controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  width: 100%;
+  margin-top: 24px;
+  gap: 10px;
 }
 
-.card-label {
-  color: #718096;
-  font-size: 14px;
-  font-weight: 500;
-  white-space: nowrap; /* Keep label on one line */
-}
-
-.card-value {
-  color: #2d3748;
-  font-size: 18px;
+.pagination-controls button {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  color: #4a4e57;
+  padding: 8px 16px;
+  border-radius: 8px;
   font-weight: 600;
-  white-space: nowrap; /* Keep value on one line */
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
+
+.pagination-controls button:hover:not(:disabled) {
+  border-color: #00ccd9;
+  color: #00ccd9;
+}
+
+.pagination-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.page-indicator {
+  font-weight: 600;
+  font-size: 14px;
+  color: #718096;
+}
+
+/* Fallback for empty table */
+.empty-table-message {
+  text-align: center;
+  padding: 40px;
+  color: #a0aec0;
+  font-style: italic;
+}
+
+
 
 /* Responsive Design */
 @media (max-width: 1200px) {
