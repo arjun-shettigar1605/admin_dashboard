@@ -16,10 +16,7 @@ const Dashboard = () => {
         <div className="content-area">
           <ProjectTable />
           {/* CORRECTED: Changed className to "bottom-content" to match the CSS */}
-          <div className="bottom-content">
-            <ProjectChart />
-            <SummaryCards />
-          </div>
+
         </div>
       </div>
     </div>
