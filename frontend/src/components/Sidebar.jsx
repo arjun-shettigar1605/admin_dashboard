@@ -1,14 +1,26 @@
 import React from "react";
-import logo from "/logo.png";
+import {
+  LayoutDashboard,
+  Briefcase,
+  BarChart3,
+  UserCog,
+  LifeBuoy,
+  Settings,
+} from "lucide-react";
+
 
 const Sidebar = ({ activeItem, setActiveItem }) => {
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: "📊" },
-    { id: "projects", label: "Projects", icon: "🏠" },
-    { id: "report", label: "Report", icon: "📋" },
-    { id: "admin", label: "Admin", icon: "👥" },
-    { id: "support", label: "Support", icon: "💬" },
-    { id: "settings", label: "Settings", icon: "⚙️" },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: <LayoutDashboard size={20} />,
+    },
+    { id: "projects", label: "Projects", icon: <Briefcase size={20} /> },
+    { id: "report", label: "Report", icon: <BarChart3 size={20} /> },
+    { id: "admin", label: "Admin", icon: <UserCog size={20} /> },
+    { id: "support", label: "Support", icon: <LifeBuoy size={20} /> },
+    { id: "settings", label: "Settings", icon: <Settings size={20} /> },
   ];
 
   return (
@@ -16,7 +28,7 @@ const Sidebar = ({ activeItem, setActiveItem }) => {
       <div className="logo1">
         <img
           className="logo"
-          src={logo}
+          src="https://www.cyient.com/hubfs/Logo_main_animation1.svg"
         ></img>
       </div>
 

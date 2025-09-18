@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import ProjectTable from "./ProjectTable";
-import ProjectChart from "./ProjectChart";
-import SummaryCards from "./SummaryCards";
+import "../styles/Dashboard.css";
 
 const Dashboard = () => {
   const [activeMenuItem, setActiveMenuItem] = useState("dashboard");
