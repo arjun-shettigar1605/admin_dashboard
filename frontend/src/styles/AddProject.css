@@ -1,0 +1,221 @@
+.add-project-page {
+  padding: 2rem;
+  background-color: #f8fafc;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-container-v2 {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2.5rem;
+  border-radius: 16px;
+  background-color: #ffffff;
+  color: #4A4E57;
+  box-shadow: 0 10px 40px rgba(45, 55, 72, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+/* New Stepper Design */
+.stepper-v2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  width: 100%;
+}
+
+.step-item-v2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #a0aec0; /* Grey for 'Waiting' */
+  font-weight: 500;
+  transition: color 0.4s ease;
+}
+
+.step-icon-v2 {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  background-color: #e2e8f0; /* Grey BG for 'Waiting' */
+  color: #718096;
+  border: 2px solid #e2e8f0;
+  transition: all 0.4s ease;
+}
+
+.step-item-v2.active {
+  color: #2b6cb0; /* Blue for 'In Progress' */
+}
+.step-item-v2.active .step-icon-v2 {
+  background-color: #ebf8ff;
+  border-color: #3182ce;
+  color: #3182ce;
+}
+
+.step-item-v2.completed {
+  color: #2f855a; /* Green for 'Finished' */
+}
+.step-item-v2.completed .step-icon-v2 {
+  background-color: #48bb78;
+  border-color: #48bb78;
+  color: #ffffff;
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background-color: #e2e8f0; /* Grey line */
+  margin: 0 1rem;
+  transition: background-color 0.4s ease;
+}
+.step-connector.completed {
+  background-color: #3182ce; /* Blue line */
+}
+
+
+/* Form Content Styling */
+.form-content-area {
+  padding: 1rem 0;
+  min-height: 200px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.7rem;
+  margin-bottom: 0.5rem;
+  color: #4A4E57;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #4A4E57;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #00ccd9; /* Blue focus color */
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+/* Duration Field Styling */
+.duration-group .duration-inputs {
+  display: flex;
+  gap: 0.5rem;
+}
+.duration-inputs input {
+  flex: 3; /* Give more space to the number */
+}
+.duration-inputs select {
+  flex: 2; /* Give less space to the unit */
+}
+
+
+/* Progress Slider */
+.progress-group input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 5px;
+  outline: none;
+  padding: 0;
+}
+.progress-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #3182ce;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Form Actions & Buttons */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1.5rem;
+}
+
+.actions-right {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-cancel, .btn-submit, .btn-next, .btn-prev {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.btn-prev, .btn-cancel {
+  background-color: #f7fafc;
+  border-color: #e2e8f0;
+  color: #4A4E57;
+}
+.btn-prev:hover, .btn-cancel:hover {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.btn-next, .btn-submit {
+  background-color: #00ccd9;
+  color: #ffffff;
+}
+.btn-next:hover, .btn-submit:hover {
+  background-color: #2cabb4;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(49, 130, 206, 0.2);
+}
+
+@media (max-width: 768px) {
+  .form-row, .duration-inputs {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .step-label-v2 {
+    display: none; /* Hide labels on mobile for a cleaner look */
+  }
+  .step-connector {
+    margin: 0 0.5rem;
+  }
+}

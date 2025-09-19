@@ -1,10 +1,24 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef} from "react";
 import countriesData from "../data/countriesminified.json"; // local JSON
+import { Link } from "react-router-dom";
+import { Plus } from "lucide-react";
 
 const ProjectTable = () => {
   const [activeTab, setActiveTab] = useState("ongoing");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
+
+  const btnRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      btnRef.current.style.setProperty("--x", `${x}px`);
+      btnRef.current.style.setProperty("--y", `${y}px`);
+    }
+  };
 
   // --- Custom Regions
   const customRegions = {
@@ -219,6 +233,17 @@ const ProjectTable = () => {
     <div className="project-summary">
       <div className="summary-header">
         <h2>Project List</h2>
+        <span className="header-right">
+          <Link
+            to="/add-project"
+            className="add-project-btn"
+            ref={btnRef}
+            onMouseMove={handleMouseMove}
+          >
+            <Plus className="plus-icon" size={18} />
+            Add New Project
+          </Link>
+        </span>
       </div>
 
       <div className="tabs">

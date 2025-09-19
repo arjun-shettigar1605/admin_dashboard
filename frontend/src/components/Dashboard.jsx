@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import ProjectTable from "./ProjectTable";
+// import ProjectTable from "./ProjectTable";
 import "../styles/Dashboard.css";
+import { Outlet } from "react-router-dom";
 
-const Dashboard = () => {
+const Dashboard = ({ setIsLoggedIn }) => {
   const [activeMenuItem, setActiveMenuItem] = useState("dashboard");
 
   return (
     <div className="dashboard-layout">
       <Sidebar activeItem={activeMenuItem} setActiveItem={setActiveMenuItem} />
       <div className="main-content">
-        <Header />
+        <Header setIsLoggedIn={setIsLoggedIn}/>
         <div className="content-area">
-          <ProjectTable />
+          <Outlet/>
           {/* CORRECTED: Changed className to "bottom-content" to match the CSS */}
 
         </div>
