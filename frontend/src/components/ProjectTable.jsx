@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import countriesData from "../data/countriesminified.json"; // local JSON
+import { useParams } from "react-router-dom";
+
 
 const ProjectTable = () => {
+  const { projectType } = useParams();
   const [activeTab, setActiveTab] = useState("ongoing");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -87,6 +90,7 @@ const ProjectTable = () => {
       clientName: "Innovate Corp",
       country: "United States",
       region: "Americas",
+      type: "utilities",
     },
     {
       id: 2,
@@ -102,6 +106,7 @@ const ProjectTable = () => {
       clientName: "Tech Solutions Ltd.",
       country: "Canada",
       region: "Americas",
+      type: "utilities",
     },
     {
       id: 3,
@@ -117,6 +122,7 @@ const ProjectTable = () => {
       clientName: "Global Exports",
       country: "United Kingdom",
       region: "Europe",
+      type: "geospatial",
     },
     {
       id: 4,
@@ -132,6 +138,7 @@ const ProjectTable = () => {
       clientName: "Future Systems",
       country: "Germany",
       region: "Europe",
+      type: "geospatial",
     },
     {
       id: 5,
@@ -147,6 +154,7 @@ const ProjectTable = () => {
       clientName: "Data Ventures",
       country: "India",
       region: "Asia Pacific",
+      type: "geospatial",
     },
     {
       id: 6,
@@ -162,6 +170,7 @@ const ProjectTable = () => {
       clientName: "Gulf Innovations",
       country: "United Arab Emirates",
       region: "Middle East",
+      type: "utilities",
     },
   ];
 
@@ -214,6 +223,13 @@ const ProjectTable = () => {
     }
     return projects;
   }, [activeTab, projects, selectedRegion, selectedCountry]);
+
+  // Filter projects based on projectType
+  const projectTypeFilteredProjects = useMemo(() => {
+    return projects.filter(project => 
+      project.type.toLowerCase() === projectType.toLowerCase()
+    );
+  }, [projectType, projects]);
 
   return (
     <div className="project-summary">

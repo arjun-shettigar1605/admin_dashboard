@@ -1,0 +1,23 @@
+.animatedPath {
+  animation: colorChange 4000ms linear infinite forwards;
+}
+
+@keyframes colorChange {
+  0% {
+    fill: #fff;
+  }
+  47.5% {
+    fill: #fff;
+    animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  }
+  55% {
+    fill: #00ccd9;
+    animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  }
+  62.5% {
+    fill: #fff;
+  }
+  100% {
+    fill: #fff;
+  }
+}

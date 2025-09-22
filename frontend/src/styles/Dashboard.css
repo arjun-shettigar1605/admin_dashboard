@@ -34,7 +34,7 @@ body {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logo {
+.logo1 {
   display: block; /* Ensures proper alignment and sizing */
   width: 60%;
   margin: 30px auto; /* Centered with top/bottom margin */
@@ -526,6 +526,7 @@ left: 0;
 }
 
 
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .header-left {
@@ -637,38 +638,49 @@ left: 0;
   }
 }
 
-
-/* profile dropdown */
- 
-.profile-container {
-  position: relative;
-}
-
-.user-profile { 
-  cursor: pointer;
+/* --- New Header Action Link Styles --- */
+.header-action-link, .header-logout-link {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px;
-  border-radius: 50px;
-  transition: background-color 0.2s ease-in-out;
-}
-.user-profile:hover {
-  background-color: #f0f2f5;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4A4E57;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
 }
 
-.profile-dropdown {
-  position: fixed; /* <-- CHANGE THIS from 'absolute' to 'fixed' */
-  width: 200px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  border: 1px solid #e2e8f0;
-  z-index: 1000; /* Ensure it overlays content */
-  overflow: hidden;
-  animation: dropdown-fade-in 0.2s ease-out;
-  /* top and right properties are now set by inline styles */
+.header-action-link:hover {
+  background-color: #f8fafc;
+  color: #00ccd9;
 }
+
+.header-logout-link:hover{
+  background-color: #f8fafc;
+  color: red;
+}
+
+.user-avatar {
+  margin-left: 12px; /* Add some space to the left */
+}
+
+.user-avatar .avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #6c5ce7;
+  border: 2px solid #00ccd9;
+  object-fit: cover; /* Ensures the image covers the area without distortion */
+  display: block; /* Removes any unwanted spacing */
+  aspect-ratio: 1; /* Forces a 1:1 aspect ratio */
+}
+
+
 
 /* (The rest of your dropdown styles remain the same) */
 @keyframes dropdown-fade-in {

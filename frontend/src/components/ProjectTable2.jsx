@@ -345,6 +345,9 @@ const ProjectTable = () => {
               <th>Client Name</th>
               <th>Country</th>
               <th>Project Overview</th>
+              <th>Actions
+                <td></td>
+              </th>
             </tr>
           </thead>
           <tbody>

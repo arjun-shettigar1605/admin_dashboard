@@ -2,6 +2,7 @@
   padding: 2rem;
   text-align: center;
   animation: fadeIn 0.5s ease-in-out;
+  font-family: 'Montserrat', sans-serif; /* Base font for the component */
 }
 
 @keyframes fadeIn {
@@ -25,40 +26,185 @@
 }
 
 .dashboard-tile {
-  width: 250px;
-  height: 250px;
+  width: 550px;
+  height: 400px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
-  padding: 2rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  position: relative;
   text-decoration: none;
-  color: #4A4E57;
+  color: #ffffff;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .dashboard-tile:hover {
-  transform: translateY(-8px);
+  transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   border-color: #00ccd9;
 }
 
-.tile-icon {
-  color: #00ccd9;
-  margin-bottom: 1.5rem;
+.tile-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.tile-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.tile-image.default-image {
+  opacity: 1;
+}
+
+.tile-image.hover-image {
+  opacity: 0;
+}
+
+/* .dashboard-tile:hover .tile-image.default-image {
+  opacity: 0;
+} */
+
+.dashboard-tile:hover .tile-image.hover-image {
+  opacity: 1;
+}
+
+.tile-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  z-index: 2;
 }
 
 .tile-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  color: #ffffff;
+  transition: color 0.3s ease;
 }
 
 .tile-description {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 400;
+  opacity: 0.9;
+  transition: color 0.3s ease;
+  margin-bottom: 0.1rem;
+}
+
+.dashboard-tile:hover .tile-description {
+  color: #00ccd9;
+}
+
+.view-button {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: #4A4E57;
+  padding: 0.75rem 1.25rem;
+  border-radius: 25px;
+  font-weight: 500;
   font-size: 0.9rem;
-  color: #718096;
+  transition: all 0.3s ease;
+  z-index: 3;
+}
+
+.dashboard-tile:hover .view-button {
+  background: #00ccd9;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .dashboard-tile {
+    width: 450px;
+    height: 350px;
+  }
+}
+
+@media (max-width: 992px) {
+  .dashboard-tile {
+    width: 400px;
+    height: 300px;
+  }
+  
+  .tile-title {
+    font-size: 1.6rem;
+  }
+  
+  .tile-description {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tiles-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .dashboard-tile {
+    width: 350px;
+    height: 250px;
+  }
+  
+  .tile-content {
+    padding: 1.5rem;
+  }
+  
+  .tile-title {
+    font-size: 1.4rem;
+  }
+  
+  .tile-description {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-tile {
+    width: 280px;
+    height: 200px;
+  }
+  
+  .tile-content {
+    padding: 1rem;
+  }
+  
+  .tile-title {
+    font-size: 1.2rem;
+  }
+  
+  .tile-description {
+    font-size: 0.8rem;
+  }
+  
+  .view-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    top: 1rem;
+    right: 1rem;
+  }
 }
