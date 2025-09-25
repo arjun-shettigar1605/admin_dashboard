@@ -15,7 +15,7 @@ const DashboardHome = () => {
 
   return (
     <div className="dashboard-home">
-      <h1 className="dashboard-title">Geospatial and Utilities</h1>
+      {/* <h1 className="dashboard-title">Geospatial and Utilities</h1> */}
       <div className="tiles-container">
         <div
           className="dashboard-tile"
@@ -35,9 +35,9 @@ const DashboardHome = () => {
           </div>
           <div className="tile-content">
             <h2 className="tile-title">Geospatial</h2>
-            <p className="tile-description">Explore geospatial initiatives</p>
+            {/* <p className="tile-description">Explore geospatial initiatives</p> */}
           </div>
-          <div className="view-button">View Projects</div>
+          {/* <div className="view-button">View Projects</div> */}
         </div>
         <div
           className="dashboard-tile"
@@ -57,9 +57,9 @@ const DashboardHome = () => {
           </div>
           <div className="tile-content">
             <h2 className="tile-title">Utilities</h2>
-            <p className="tile-description">View all utility-based projects</p>
+            {/* <p className="tile-description">View all utility-based projects</p> */}
           </div>
-          <div className="view-button">View Projects</div>
+          {/* <div className="view-button">View Projects</div> */}
         </div>
       </div>
     </div>

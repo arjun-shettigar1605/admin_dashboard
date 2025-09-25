@@ -10,7 +10,7 @@ import ProjectTable2 from "./components/ProjectTable2";
 import AddProject from "./components/AddProject";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const Placeholder = ({ title }) => (
     <div style={{ padding: "40px", textAlign: "center" }}>
