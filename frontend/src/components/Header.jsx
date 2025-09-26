@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Plus, User, LogOut } from "lucide-react"; // Updated icons
+import { Search, User, LogOut } from "lucide-react"; 
 
-const Header = ({ setIsLoggedIn }) => {
+const Header = ({ setIsLoggedIn, activeMenuItem }) => {
   const navigate = useNavigate();
 
   const handleSignout = () => {
@@ -10,14 +10,32 @@ const Header = ({ setIsLoggedIn }) => {
     navigate("/login");
   };
 
+  const getPageTitle = () => {
+    switch (activeMenuItem) {
+      case "dashboard":
+        return "Dashboard";
+      case "projects":
+        return "Projects";
+      case "presales":
+        return "Presales";
+      case "report":
+        return "Reports";
+      case "admin":
+        return "Admin";
+      case "support":
+        return "Support";
+      default:
+        return "Dashboard";
+    }
+  };
   return (
     <header className="header">
       <div className="header-left">
-        <h1>Dashboard</h1>
+        <h1>{getPageTitle()}</h1>
         <div className="search-container">
           <input
             type="text"
-            placeholder="search project or client"
+            placeholder="search project or client"  
             className="search-input"
           />
           <Search className="search-icon" size={20} />
@@ -37,14 +55,14 @@ const Header = ({ setIsLoggedIn }) => {
           <span>Log Out</span>
         </button>
 
-        {/* User Avatar */}
+        {/* User Avatar
         <div className="user-avatar">
           <img
             src="/api/placeholder/36/36"
             alt="Admin"
             className="avatar-img"
           />
-        </div>
+        </div> */}
       </div>
     </header>
   );

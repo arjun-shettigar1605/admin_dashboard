@@ -8,6 +8,7 @@ import AdminProfile from "./components/AdminProfile";
 import Login from "./components/Login";
 import ProjectTable2 from "./components/ProjectTable2";
 import AddProject from "./components/AddProject";
+import Presales from "./components/Presales";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -51,6 +52,7 @@ function App() {
           <Route path="project-list" element={<ProjectTable2 />} />
           <Route path="admin" element={<AdminProfile />} />
           <Route path="report" element={<Placeholder title="Reports" />} />
+          <Route path="presales" element={<Presales />} />
           <Route path="support" element={<Placeholder title="Support" />} />
           <Route path="add-project" element={<AddProject />} />
         </Route>

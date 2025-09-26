@@ -1,0 +1,155 @@
+[
+  {
+    "id": 1,
+    "projectName": "Project Alpha",
+    "projectManager": "Alice Johnson",
+    "duration": "11.5 Months",
+    "status": "completed",
+    "progress": 100,
+    "clientName": "Innovate Corp",
+    "country": "United States",
+    "type": "utilities",
+    "link": "https://cyient.com/projects/alpha",
+    "location": {
+      "city": "New York",
+      "coordinates": { "lat": 40.7128, "lng": -74.006 },
+      "address": "Manhattan, NY"
+    }
+  },
+  {
+    "id": 2,
+    "projectName": "Project Beta",
+    "projectManager": "Bob Williams",
+    "duration": "12 Months",
+    "status": "in-progress",
+    "progress": 55,
+    "clientName": "Tech Solutions Ltd.",
+    "country": "Canada",
+    "type": "utilities",
+    "link": "https://cyient.com/projects/beta",
+    "location": {
+      "city": "Toronto",
+      "coordinates": { "lat": 43.6532, "lng": -79.3832 },
+      "address": "Downtown Toronto, ON"
+    }
+  },
+  {
+    "id": 3,
+    "projectName": "Project Gamma",
+    "projectManager": "Charlie Green",
+    "duration": "5.3 Months",
+    "status": "completed",
+    "progress": 100,
+    "clientName": "Global Exports",
+    "country": "United Kingdom",
+    "type": "geospatial",
+    "link": "https://cyient.com/projects/gamma",
+    "location": {
+      "city": "London",
+      "coordinates": { "lat": 51.5074, "lng": -0.1278 },
+      "address": "Central London, UK"
+    }
+  },
+  {
+    "id": 4,
+    "projectName": "Project Delta",
+    "projectManager": "Diana Prince",
+    "duration": "8.3 Months",
+    "status": "in-progress",
+    "progress": 24,
+    "clientName": "Future Systems",
+    "country": "Germany",
+    "type": "geospatial",
+    "link": "https://cyient.com/projects/delta",
+    "location": {
+      "city": "Berlin",
+      "coordinates": { "lat": 52.52, "lng": 13.405 },
+      "address": "Berlin-Mitte, Germany"
+    }
+  },
+  {
+    "id": 5,
+    "projectName": "Project Epsilon",
+    "projectManager": "Eve Adams",
+    "duration": "1.5 Months",
+    "status": "rejected",
+    "progress": 0,
+    "clientName": "Data Ventures",
+    "country": "India",
+    "type": "geospatial",
+    "link": "https://cyient.com/projects/epsilon",
+    "location": {
+      "city": "Mumbai",
+      "coordinates": { "lat": 19.076, "lng": 72.8777 },
+      "address": "Bandra-Kurla Complex, Mumbai"
+    }
+  },
+  {
+    "id": 6,
+    "projectName": "Project Zeta",
+    "projectManager": "Farah Khan",
+    "duration": "8.7 Months",
+    "status": "in-progress",
+    "progress": 15,
+    "clientName": "Gulf Innovations",
+    "country": "United Arab Emirates",
+    "type": "utilities",
+    "link": "https://cyient.com/projects/zeta",
+    "location": {
+      "city": "Dubai",
+      "coordinates": { "lat": 25.2048, "lng": 55.2708 },
+      "address": "Dubai Marina, UAE"
+    }
+  },
+  {
+    "id": 7,
+    "projectName": "Project Theta",
+    "projectManager": "George Miller",
+    "duration": "6.2 Months",
+    "status": "in-progress",
+    "progress": 78,
+    "clientName": "Tech Hub India",
+    "country": "India",
+    "type": "utilities",
+    "link": "https://cyient.com/projects/theta",
+    "location": {
+      "city": "Bangalore",
+      "coordinates": { "lat": 12.9716, "lng": 77.5946 },
+      "address": "Electronic City, Bangalore"
+    }
+  },
+  {
+    "id": 8,
+    "projectName": "Project Kappa",
+    "projectManager": "Helen Davis",
+    "duration": "4.8 Months",
+    "status": "completed",
+    "progress": 100,
+    "clientName": "Emirates Solutions",
+    "country": "United Arab Emirates",
+    "type": "geospatial",
+    "link": "https://cyient.com/projects/kappa",
+    "location": {
+      "city": "Abu Dhabi",
+      "coordinates": { "lat": 24.4539, "lng": 54.3773 },
+      "address": "Abu Dhabi Business Hub, UAE"
+    }
+  },
+  {
+    "id": 9,
+    "projectName": "Project Lambda",
+    "projectManager": "Ian Cooper",
+    "duration": "7.1 Months",
+    "status": "completed",
+    "progress": 100,
+    "clientName": "Delhi Infrastructure",
+    "country": "India",
+    "type": "utilities",
+    "link": "https://cyient.com/projects/lambda",
+    "location": {
+      "city": "New Delhi",
+      "coordinates": { "lat": 28.6139, "lng": 77.209 },
+      "address": "Connaught Place, New Delhi"
+    }
+  }
+]

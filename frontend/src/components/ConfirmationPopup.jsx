@@ -13,13 +13,13 @@ const ConfirmationPopup = ({
 }) => {
   const handleConfirm = () => {
     onConfirm(); // First, run the original confirm logic (e.g., delete items)
-    onClose(); // Then, close the popup
+    close(); // Then, close the popup
   };
 
   const handleOverlayClick = (e) => {
     // Close popup if clicking on the overlay (not the popup content)
     if (e.target === e.currentTarget) {
-      onClose();
+      close();
     }
   };
 

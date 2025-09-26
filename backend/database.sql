@@ -1,0 +1,24 @@
+database.sql
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE projects (
+    id SERIAL PRIMARY KEY,
+    project_name VARCHAR(100) NOT NULL,
+    client_name VARCHAR(100) NOT NULL,
+    project_manager VARCHAR(100) NOT NULL,
+    duration VARCHAR(50) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    region VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    budget DECIMAL(15,2) NOT NULL,
+    progress INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

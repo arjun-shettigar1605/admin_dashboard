@@ -7,6 +7,7 @@ import {
   BarChart3,
   UserCog,
   LifeBuoy,
+  FileText,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -22,6 +23,7 @@ const Sidebar = ({ activeItem, setActiveItem }) => {
     },
     { id: "projects", label: "Projects", path: "/project-list", icon: <Briefcase size={20} /> },
     { id: "report", label: "Report", path: "/report", icon: <BarChart3 size={20} /> },
+    { id: "presales", label: "Presales", path: "/presales", icon: <FileText size={20} />},
     { id: "admin", label: "Admin", path: "/admin", icon: <UserCog size={20} /> },
     { id: "support", label: "Support", path: "/support", icon: <LifeBuoy size={20} /> },
   ];

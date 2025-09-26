@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from "react";
-import { Link } from "react-router-dom";
 import countriesData from "../data/countriesminified.json";
+import projectsData from "../data/projects.json"; // Using centralized data
 import { Plus, FolderEdit, Trash2 } from "lucide-react";
 import ConfirmationPopup from "./ConfirmationPopup";
 import Popup from "reactjs-popup";
@@ -29,173 +29,31 @@ const ProjectTable2 = () => {
     }
   };
 
-  // --- Custom Regions
-  const customRegions = {
-    "Middle East": [
-      { name: "United Arab Emirates" },
-      { name: "Saudi Arabia" },
-      { name: "Qatar" },
-      { name: "Oman" },
-      { name: "Bahrain" },
-      { name: "Kuwait" },
-      { name: "Israel" },
-      { name: "Jordan" },
-      { name: "Lebanon" },
-      { name: "Egypt" },
-      { name: "Turkey" },
-    ],
-    "Asia Pacific": [
-      { name: "China" },
-      { name: "Japan" },
-      { name: "South Korea" },
-      { name: "India" },
-      { name: "Australia" },
-      { name: "New Zealand" },
-      { name: "Singapore" },
-      { name: "Malaysia" },
-      { name: "Indonesia" },
-      { name: "Thailand" },
-      { name: "Vietnam" },
-      { name: "Philippines" },
-    ],
+  // --- New Region Definitions ---
+  const newRegions = {
+    "North America": (country) =>
+      country.region === "Americas" && country.subregion !== "South America",
+    "South America": (country) =>
+      country.region === "Americas" && country.subregion === "South America",
+    Europe: (country) => country.region === "Europe",
+    "Asia Pacific": (country) =>
+      (country.region === "Asia" && country.name !== "India") ||
+      country.region === "Oceania",
+    Africa: (country) => country.region === "Africa",
+    India: (country) => country.name === "India",
   };
 
-  // --- Static Lists for Select Components ---
-  const regionOptions = useMemo(() => {
-    // Extract unique regions from countriesData
-    const regionsFromFile = Array.from(
-      new Set(countriesData.map((c) => c.region).filter((r) => r))
-    );
-
-    // Get the keys (region names) from customRegions
-    const customRegionNames = Object.keys(customRegions);
-
-    // Combine and get a unique list of all region names
-    const allUniqueRegionNames = new Set([
-      ...regionsFromFile,
-      ...customRegionNames,
-    ]);
-
-    // Convert the Set to a sorted array
-    return Array.from(allUniqueRegionNames).sort();
-  }, [customRegions]); // Empty dependency array ensures this runs only once
+  const regionOptions = Object.keys(newRegions);
 
   const countryOptions = useMemo(() => {
-    if (!selectedRegion) {
-      return [];
-    }
-    if (customRegions[selectedRegion]) {
-      return customRegions[selectedRegion].map((c) => c.name);
-    } else {
-      return countriesData
-        .filter((c) => c.region === selectedRegion)
-        .map((c) => c.name)
-        .sort(); // Sort countries alphabetically
-    }
-  }, [selectedRegion, customRegions]); // Re-calculate whenever selectedRegion changes
+    if (!selectedRegion) return [];
+    return countriesData
+      .filter((country) => newRegions[selectedRegion](country))
+      .map((c) => c.name)
+      .sort();
+  }, [selectedRegion]);
 
-  // --- Projects Data ---
-  const projects = useMemo(
-    () => [
-      {
-        id: 1,
-        projectName: "Project Alpha",
-        projectManager: "Alice Johnson",
-        reportingManager: "Robert Brown",
-        startDate: "2023-01-15",
-        endDate: "2023-12-31",
-        duration: "11.5 Months",
-        status: "completed",
-        progress: 100,
-        budget: "$250,000",
-        clientName: "Innovate Corp",
-        country: "United States",
-        region: "Americas",
-        type: "utilities",
-      },
-      {
-        id: 2,
-        projectName: "Project Beta",
-        projectManager: "Bob Williams",
-        reportingManager: "Susan Davis",
-        startDate: "2023-03-01",
-        endDate: "2024-02-28",
-        duration: "12 Months",
-        status: "in-progress",
-        progress: 55,
-        budget: "$450,000",
-        clientName: "Tech Solutions Ltd.",
-        country: "Canada",
-        region: "Americas",
-        type: "utilities",
-      },
-      {
-        id: 3,
-        projectName: "Project Gamma",
-        projectManager: "Charlie Green",
-        reportingManager: "Robert Brown",
-        startDate: "2023-06-10",
-        endDate: "2023-11-20",
-        duration: "5.3 Months",
-        status: "completed",
-        progress: 100,
-        budget: "$120,000",
-        clientName: "Global Exports",
-        country: "United Kingdom",
-        region: "Europe",
-        type: "geospatial",
-      },
-      {
-        id: 4,
-        projectName: "Project Delta",
-        projectManager: "Diana Prince",
-        reportingManager: "Susan Davis",
-        startDate: "2023-08-20",
-        endDate: "2024-05-30",
-        duration: "9.3 Months",
-        status: "in-progress",
-        progress: 24,
-        budget: "$800,000",
-        clientName: "Future Systems",
-        country: "Germany",
-        region: "Europe",
-        type: "geospatial",
-      },
-      {
-        id: 5,
-        projectName: "Project Epsilon",
-        projectManager: "Eve Adams",
-        reportingManager: "Robert Brown",
-        startDate: "2023-09-01",
-        endDate: "2023-10-15",
-        duration: "1.5 Months",
-        status: "rejected",
-        progress: 0,
-        budget: "$50,000",
-        clientName: "Data Ventures",
-        country: "India",
-        region: "Asia Pacific",
-        type: "geospatial",
-      },
-      {
-        id: 6,
-        projectName: "Project Zeta",
-        projectManager: "Farah Khan",
-        reportingManager: "Susan Davis",
-        startDate: "2024-01-10",
-        endDate: "2024-09-30",
-        duration: "8.7 Months",
-        status: "in-progress",
-        progress: 15,
-        budget: "$600,000",
-        clientName: "Gulf Innovations",
-        country: "United Arab Emirates",
-        region: "Middle East",
-        type: "utilities",
-      },
-    ],
-    []
-  );
+  const projects = useMemo(() => projectsData, []);
 
   // --- Status Helpers ---
   const getStatusClass = (status) => {
@@ -225,7 +83,14 @@ const ProjectTable2 = () => {
   };
 
   const handleViewProject = (projectId) => {
-    window.open("https://omni-vmadev.corp.cyient.com/portal/apps/experiencebuilder/experience/?id=ca11306b21e45fadb54dc4d8b7c690e", "_blank");
+    const project = projects.find((p) => p.id === projectId);
+    if (project && project.link) {
+      window.open(project.link, "_blank");
+    } else {
+      console.error("Project link not found for ID:", projectId);
+      // Fallback to a default link if needed
+      window.open("https://cyient.com/projects", "_blank");
+    }
   };
 
   // Modify handleEdit to use modal instead of navigation
@@ -259,6 +124,8 @@ const ProjectTable2 = () => {
   };
 
   const handleConfirmDelete = () => {
+    // In a real app, you would filter the projects state here
+    console.log("Deleting projects with IDs:", selectedProjects);
     setShowCheckboxes(false);
     setSelectedProjects([]);
   };
@@ -272,22 +139,29 @@ const ProjectTable2 = () => {
     setSelectedProjects([]);
   };
 
-  // --- Memoized Filtered Projects ---
+  // --- Memoized Filtered Projects (with updated logic) ---
   const filteredProjects = useMemo(() => {
     if (activeTab === "ongoing") {
       return projects.filter((p) => p.status === "in-progress");
-    } else if (activeTab === "completed") {
+    }
+    if (activeTab === "completed") {
       return projects.filter((p) => p.status === "completed");
-    } else if (activeTab === "regions") {
-      return projects.filter((p) => {
-        const matchesRegion = !selectedRegion || p.region === selectedRegion;
-        const matchesCountry =
-          !selectedCountry || p.country === selectedCountry;
-        return matchesRegion && matchesCountry;
-      });
+    }
+    if (activeTab === "regions") {
+      let projectsToFilter = projects;
+      if (selectedRegion) {
+        const countrySet = new Set(countryOptions);
+        projectsToFilter = projects.filter((p) => countrySet.has(p.country));
+      }
+      if (selectedCountry) {
+        projectsToFilter = projectsToFilter.filter(
+          (p) => p.country === selectedCountry
+        );
+      }
+      return projectsToFilter;
     }
     return projects;
-  }, [activeTab, projects, selectedRegion, selectedCountry]);
+  }, [activeTab, projects, selectedRegion, selectedCountry, countryOptions]);
 
   const deleteMessage = `Are you sure you want to delete the selected project${
     selectedProjects.length > 1 ? "s" : ""
@@ -367,6 +241,12 @@ const ProjectTable2 = () => {
 
         <div className="tabs">
           <div
+            className={`tab ${activeTab === "regions" ? "active" : ""}`}
+            onClick={() => setActiveTab("regions")}
+          >
+            Regions
+          </div>
+          <div
             className={`tab ${activeTab === "ongoing" ? "active" : ""}`}
             onClick={() => setActiveTab("ongoing")}
           >
@@ -377,12 +257,6 @@ const ProjectTable2 = () => {
             onClick={() => setActiveTab("completed")}
           >
             Completed
-          </div>
-          <div
-            className={`tab ${activeTab === "regions" ? "active" : ""}`}
-            onClick={() => setActiveTab("regions")}
-          >
-            Regions
           </div>
         </div>
 
@@ -542,7 +416,10 @@ const ProjectTable2 = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="12" style={{ textAlign: "center" }}>
+                  <td
+                    colSpan={showCheckboxes ? 10 : 9}
+                    style={{ textAlign: "center" }}
+                  >
                     No projects found
                   </td>
                 </tr>

@@ -229,7 +229,7 @@ const AddProject = ({ projectData, closeForm }) => {
     return (
       <div className="form-container-v2 modal-form">
         <h2 className="form-title">
-          {iseditMode ? "Edit Project" : "Add New Project"}
+          {isEditMode ? "Edit Project" : "Add New Project"}
         </h2>
         <div className="stepper-v2">
           {stepperLabels.map((label, index) => (
@@ -277,7 +277,7 @@ const AddProject = ({ projectData, closeForm }) => {
                 </button>
               ) : (
                 <button type="submit" className="btn-submit">
-                  {iseditMode ? "Update Project" : "Create Project"}
+                  {isEditMode ? "Update Project" : "Create Project"}
                 </button>
               )}
             </div>
