@@ -8,7 +8,7 @@ import "reactjs-popup/dist/index.css";
 import AddProject from "./AddProject";
 
 const ProjectTable2 = () => {
-  const [activeTab, setActiveTab] = useState("ongoing");
+  const [activeTab, setActiveTab] = useState("regions");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [showCheckboxes, setShowCheckboxes] = useState(false);
@@ -62,8 +62,6 @@ const ProjectTable2 = () => {
         return "status-completed";
       case "in-progress":
         return "status-progress";
-      case "rejected":
-        return "status-rejected";
       default:
         return "";
     }
@@ -75,8 +73,6 @@ const ProjectTable2 = () => {
         return "Completed";
       case "in-progress":
         return "Ongoing";
-      case "rejected":
-        return "Rejected";
       default:
         return status;
     }

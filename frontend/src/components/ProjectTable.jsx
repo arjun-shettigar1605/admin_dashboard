@@ -24,7 +24,6 @@ const createCustomIcon = (status) => {
   const iconColors = {
     completed: "#28a745",
     "in-progress": "#ffc107",
-    rejected: "#dc3545",
   };
 
   return L.divIcon({
@@ -64,7 +63,7 @@ const FitBounds = ({ bounds }) => {
 
 const ProjectTable = () => {
   const { projectType } = useParams();
-  const [activeTab, setActiveTab] = useState("ongoing");
+  const [activeTab, setActiveTab] = useState("regions");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [clientLocations, setClientLocations] = useState([]);
@@ -140,8 +139,6 @@ const ProjectTable = () => {
         return "status-completed";
       case "in-progress":
         return "status-progress";
-      case "rejected":
-        return "status-rejected";
       default:
         return "";
     }
@@ -153,8 +150,6 @@ const ProjectTable = () => {
         return "Completed";
       case "in-progress":
         return "Ongoing";
-      case "rejected":
-        return "Rejected";
       default:
         return status;
     }
