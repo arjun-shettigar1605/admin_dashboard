@@ -35,20 +35,47 @@
   },
   {
     "id": 3,
-    "projectName": "Project Gamma",
-    "projectManager": "Charlie Green",
-    "duration": "5.3 Months",
+    "projectName": "Network Vision",
+    "projectManager": "Jane Doe",
+    "duration": "18 Months",
     "status": "completed",
     "progress": 100,
-    "clientName": "Global Exports",
+    "clientName": "UKPN",
     "country": "United Kingdom",
-    "type": "geospatial",
-    "link": "https://cyient.com/projects/gamma",
+    "type": "utilities",
+    "link": "https://cyient.com/projects/network-vision",
     "location": {
       "city": "London",
       "coordinates": { "lat": 51.5074, "lng": -0.1278 },
       "address": "Central London, UK"
-    }
+    },
+    "clients": [
+      {
+        "name": "National Grid",
+        "location": "Warwick",
+        "coordinates": { "lat": 52.282, "lng": -1.5944 }
+      },
+      {
+        "name": "Scottish and Southern Electricity Networks",
+        "location": "Perth, Scotland",
+        "coordinates": { "lat": 56.395, "lng": -3.4308 }
+      },
+      {
+        "name": "SP Energy Networks",
+        "location": "Glasgow, Scotland",
+        "coordinates": { "lat": 55.8642, "lng": -4.2518 }
+      },
+      {
+        "name": "Northern Powergrid",
+        "location": "Newcastle upon Tyne",
+        "coordinates": { "lat": 54.9783, "lng": -1.6178 }
+      },
+      {
+        "name": "Electricity North West",
+        "location": "Warrington",
+        "coordinates": { "lat": 53.391, "lng": -2.593 }
+      }
+    ]
   },
   {
     "id": 4,
@@ -120,20 +147,47 @@
   },
   {
     "id": 8,
-    "projectName": "Project Kappa",
-    "projectManager": "Helen Davis",
-    "duration": "4.8 Months",
-    "status": "completed",
-    "progress": 100,
-    "clientName": "Emirates Solutions",
-    "country": "United Arab Emirates",
+    "projectName": "Indoors",
+    "projectManager": "Vamsi Pattamatta",
+    "duration": "4 Months",
+    "status": "in-progress",
+    "progress": 50,
+    "clientName": "In-house",
+    "country": "United States",
     "type": "geospatial",
-    "link": "https://cyient.com/projects/kappa",
+    "link": "https://inizuvm4dev.corp.cyient.com/portal/apps/experiencebuilder/experience/?id=caa11306b21e45ceb55dc94087cb58e",
     "location": {
-      "city": "Abu Dhabi",
-      "coordinates": { "lat": 24.4539, "lng": 54.3773 },
-      "address": "Abu Dhabi Business Hub, UAE"
-    }
+      "city": "California",
+      "coordinates": { "lat": 37.1661, "lng": -119.4494 },
+      "address": "United States"
+    },
+    "clients": [
+      {
+        "name": "Lowell High School",
+        "location": "San Francisco, CA",
+        "coordinates": { "lat": 37.73, "lng": -122.48 }
+      },
+      {
+        "name": "Troy High School",
+        "location": "Fullerton, CA",
+        "coordinates": { "lat": 33.88, "lng": -117.89 }
+      },
+      {
+        "name": "Granada Hills Charter",
+        "location": "Los Angeles, CA",
+        "coordinates": { "lat": 34.26, "lng": -118.53 }
+      },
+      {
+        "name": "Palo Alto High School",
+        "location": "Palo Alto, CA",
+        "coordinates": { "lat": 37.44, "lng": -122.16 }
+      },
+      {
+        "name": "Beverly Hills High School",
+        "location": "Beverly Hills, CA",
+        "coordinates": { "lat": 34.06, "lng": -118.41 }
+      }
+    ]
   },
   {
     "id": 9,

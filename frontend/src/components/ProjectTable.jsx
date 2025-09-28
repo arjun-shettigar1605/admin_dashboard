@@ -6,7 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import projects from "../data/projects.json"; 
+import projects from "../data/projects.json";
 
 // Fix for default markers in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -42,17 +42,23 @@ const createCustomIcon = (status) => {
   });
 };
 
+const createClientIcon = () => {
+  return L.divIcon({
+    html: `<div style="background-color: #3b82f6; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>`,
+    className: "client-marker",
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+  });
+};
+
 // Component to fit map bounds to markers
 const FitBounds = ({ bounds }) => {
   const map = useMap();
-
   useEffect(() => {
     if (bounds && bounds.length > 0) {
-      const leafletBounds = L.latLngBounds(bounds);
-      map.fitBounds(leafletBounds, { padding: [20, 20] });
+      map.fitBounds(L.latLngBounds(bounds), { padding: [40, 40] });
     }
   }, [bounds, map]);
-
   return null;
 };
 
@@ -61,6 +67,7 @@ const ProjectTable = () => {
   const [activeTab, setActiveTab] = useState("ongoing");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
+  const [clientLocations, setClientLocations] = useState([]);
 
   const navigate = useNavigate();
 
@@ -120,6 +127,12 @@ const ProjectTable = () => {
       .sort();
   }, [selectedRegion]);
 
+  useEffect(() => {
+    const projectWithClients = projects.find(
+      (p) => p.country === selectedCountry && p.clients
+    );
+    setClientLocations(projectWithClients ? projectWithClients.clients : []);
+  }, [selectedCountry]);
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -158,20 +171,6 @@ const ProjectTable = () => {
     }
   };
 
-  
-  const selectedCountryProjects = useMemo(() => {
-    if (!selectedCountry) return [];
-    return projects.filter((project) => project.country === selectedCountry);
-  }, [selectedCountry, projects]);
-
-  const mapBounds = useMemo(() => {
-    if (selectedCountryProjects.length === 0) return [];
-    return selectedCountryProjects.map((project) => [
-      project.location.coordinates.lat,
-      project.location.coordinates.lng,
-    ]);
-  }, [selectedCountryProjects]);
-
   // Corrected filtering logic
   const filteredProjects = useMemo(() => {
     let projectsToFilter = projects;
@@ -202,12 +201,37 @@ const ProjectTable = () => {
     return projectsToFilter;
   }, [
     activeTab,
-    projects,
+    // projects,
     selectedRegion,
     selectedCountry,
     projectType,
     countryOptions,
   ]);
+
+  const selectedCountryProjects = useMemo(() => {
+    if (activeTab === "regions" && selectedCountry) {
+      return filteredProjects.filter((p) => p.country === selectedCountry);
+    }
+    return [];
+  }, [activeTab, selectedCountry, filteredProjects]);
+
+  const mapBounds = useMemo(() => {
+    const projectCoords = selectedCountryProjects.map((p) => [
+      p.location.coordinates.lat,
+      p.location.coordinates.lng,
+    ]);
+    const clientCoords = clientLocations.map((c) => [
+      c.coordinates.lat,
+      c.coordinates.lng,
+    ]);
+    return [...projectCoords, ...clientCoords];
+  }, [selectedCountryProjects, clientLocations]);
+
+  // Check if we should show the map
+  const shouldShowMap =
+    activeTab === "regions" &&
+    selectedCountry &&
+    selectedCountryProjects.length > 0;
 
   return (
     <div className="project-summary">
@@ -364,169 +388,114 @@ const ProjectTable = () => {
         </table>
       </div>
 
-      {activeTab === "regions" &&
-        selectedCountry &&
-        selectedCountryProjects.length > 0 && (
-          <div className="map-section" style={{ marginTop: "2rem" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "1rem",
-              }}
+      {shouldShowMap && (
+        <div className="map-section" style={{ marginTop: "2rem" }}>
+          <h3>Project Locations in {selectedCountry}</h3>
+          <div
+            style={{
+              height: "400px",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              overflow: "hidden",
+            }}
+          >
+            <MapContainer
+              center={[
+                selectedCountryProjects[0].location.coordinates.lat,
+                selectedCountryProjects[0].location.coordinates.lng,
+              ]}
+              zoom={6}
+              style={{ height: "100%", width: "100%" }}
             >
-              <h3>Project Locations in {selectedCountry}</h3>
-              <div style={{ display: "flex", gap: "1rem", fontSize: "0.9rem" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
+              <TileLayer
+                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              />
+              <FitBounds bounds={mapBounds} />
+              {selectedCountryProjects.map((project) => (
+                <Marker
+                  key={project.id}
+                  position={[
+                    project.location.coordinates.lat,
+                    project.location.coordinates.lng,
+                  ]}
+                  icon={createCustomIcon(project.status)}
                 >
-                  <div
-                    style={{
-                      width: "12px",
-                      height: "12px",
-                      borderRadius: "50%",
-                      backgroundColor: "#28a745",
-                      border: "2px solid white",
-                      boxShadow: "0 1px 2px rgba(0,0,0,0.3)",
-                    }}
-                  ></div>
-                  <span>Completed</span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "12px",
-                      height: "12px",
-                      borderRadius: "50%",
-                      backgroundColor: "#ffc107",
-                      border: "2px solid white",
-                      boxShadow: "0 1px 2px rgba(0,0,0,0.3)",
-                    }}
-                  ></div>
-                  <span>Ongoing</span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "12px",
-                      height: "12px",
-                      borderRadius: "50%",
-                      backgroundColor: "#dc3545",
-                      border: "2px solid white",
-                      boxShadow: "0 1px 2px rgba(0,0,0,0.3)",
-                    }}
-                  ></div>
-                  <span>Rejected</span>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{
-                height: "400px",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                overflow: "hidden",
-              }}
-            >
-              <MapContainer
-                center={[
-                  selectedCountryProjects[0].location.coordinates.lat,
-                  selectedCountryProjects[0].location.coordinates.lng,
-                ]}
-                zoom={6}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                <FitBounds bounds={mapBounds} />
-                {selectedCountryProjects.map((project) => (
-                  <Marker
-                    key={project.id}
-                    position={[
-                      project.location.coordinates.lat,
-                      project.location.coordinates.lng,
-                    ]}
-                    icon={createCustomIcon(project.status)}
-                  >
-                    <Popup>
-                      <div style={{ minWidth: "200px" }}>
-                        <h4 style={{ margin: "0 0 8px 0", color: "#333" }}>
-                          {project.projectName}
-                        </h4>
-                        <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                          <strong>Manager:</strong> {project.projectManager}
-                        </p>
-                        <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                          <strong>Client:</strong> {project.clientName}
-                        </p>
-                        <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                          <strong>Status:</strong>
-                          <span
-                            className={`status ${getStatusClass(
-                              project.status
-                            )}`}
-                            style={{ marginLeft: "5px" }}
-                          >
-                            {getStatusText(project.status)}
-                          </span>
-                        </p>
-                        <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                          <strong>Progress:</strong> {project.progress}%
-                        </p>
-                        <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                          <strong>Location:</strong> {project.location.city}
-                        </p>
-                        <p
-                          style={{
-                            margin: "4px 0 8px 0",
-                            fontSize: "0.8rem",
-                            color: "#666",
-                          }}
+                  <Popup>
+                    <div style={{ minWidth: "200px" }}>
+                      <h4 style={{ margin: "0 0 8px 0", color: "#333" }}>
+                        {project.projectName}
+                      </h4>
+                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                        <strong>Manager:</strong> {project.projectManager}
+                      </p>
+                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                        <strong>Client:</strong> {project.clientName}
+                      </p>
+                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                        <strong>Status:</strong>
+                        <span
+                          className={`status ${getStatusClass(project.status)}`}
+                          style={{ marginLeft: "5px" }}
                         >
-                          {project.location.address}
-                        </p>
-                        <button
-                          onClick={() => handleViewProject(project.id)}
-                          style={{
-                            padding: "4px 8px",
-                            fontSize: "0.8rem",
-                            border: "1px solid #007bff",
-                            borderRadius: "4px",
-                            backgroundColor: "#007bff",
-                            color: "white",
-                            cursor: "pointer",
-                          }}
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </Popup>
-                  </Marker>
-                ))}
-              </MapContainer>
-            </div>
+                          {getStatusText(project.status)}
+                        </span>
+                      </p>
+                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                        <strong>Progress:</strong> {project.progress}%
+                      </p>
+                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                        <strong>Location:</strong> {project.location.city}
+                      </p>
+                      <p
+                        style={{
+                          margin: "4px 0 8px 0",
+                          fontSize: "0.8rem",
+                          color: "#666",
+                        }}
+                      >
+                        {project.location.address}
+                      </p>
+                      <button
+                        onClick={() => handleViewProject(project.id)}
+                        style={{
+                          padding: "4px 8px",
+                          fontSize: "0.8rem",
+                          border: "1px solid #007bff",
+                          borderRadius: "4px",
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          cursor: "pointer",
+                        }}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+              {clientLocations.map((client, index) => (
+                <Marker
+                  key={`client-${index}`}
+                  position={[client.coordinates.lat, client.coordinates.lng]}
+                  icon={createClientIcon()}
+                >
+                  <Popup>
+                    <div>
+                      <h4 style={{ margin: "0 0 8px 0", color: "#333" }}>
+                        {client.name}
+                      </h4>
+                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                        {client.location}
+                      </p>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };
