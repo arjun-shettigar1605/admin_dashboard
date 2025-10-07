@@ -1,26 +1,30 @@
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext.js";
 import "../styles/Login.css";
 import loginVideo from "/loginVideo.mp4";
 import "../styles/CyientLogo.css";
 
 const Login = ({ setIsLoggedIn }) => {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(""); // Clear previous errors
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    console.log("Email:", email, "Password:", password);
-    if (email && password) {
-      setIsLoggedIn(true);
+    try {
+      // Call the real login function
+      await login(email, password);
+      // Navigation is handled inside the login function in AuthContext
+    } catch (err) {
+      setError("Invalid credentials. Please try again.");
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (

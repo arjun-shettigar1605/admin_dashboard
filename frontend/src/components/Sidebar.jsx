@@ -1,12 +1,12 @@
 import React from "react";
 import "../styles/CyientLogo.css";
+import { useAuth } from "../context/AuthContext";
 
 import {
   LayoutDashboard,
   Briefcase,
   BarChart3,
   UserCog,
-  LifeBuoy,
   FileText,
 } from "lucide-react";
 
@@ -14,23 +14,55 @@ import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ activeItem, setActiveItem }) => {
   const navigate = useNavigate();
-  const menuItems = [
+  const { user } = useAuth();
+
+  const allMenuItems = [
     {
       id: "dashboard",
       label: "Dashboard",
-      icon: <LayoutDashboard size={20}/>,
-      path:"/",
+      icon: <LayoutDashboard size={20} />,
+      path: "/",
+      roles: ["Admin", "User"], // Both roles can see this
     },
-    { id: "projects", label: "Projects", path: "/project-list", icon: <Briefcase size={20} /> },
-    { id: "report", label: "Report", path: "/report", icon: <BarChart3 size={20} /> },
-    { id: "presales", label: "Presales", path: "/presales", icon: <FileText size={20} />},
-    { id: "admin", label: "Admin", path: "/admin", icon: <UserCog size={20} /> },
+    {
+      id: "projects",
+      label: "Projects",
+      path: "/project-list",
+      icon: <Briefcase size={20} />,
+      roles: ["Admin"], // Only Admins can see this
+    },
+    {
+      id: "report",
+      label: "Report",
+      path: "/report",
+      icon: <BarChart3 size={20} />,
+      roles: ["Admin", "User"],
+    },
+    {
+      id: "presales",
+      label: "Presales",
+      path: "/presales",
+      icon: <FileText size={20} />,
+      roles: ["Admin", "User"],
+    },
+    {
+      id: "admin",
+      label: "Admin",
+      path: "/admin",
+      icon: <UserCog size={20} />,
+      roles: ["Admin"], // Only Admins can see this
+    },
   ];
 
-  const handleItemClick = (item)=>{
+
+  const menuItems = allMenuItems.filter((item) =>
+    item.roles.includes(user?.role)
+  );
+
+  const handleItemClick = (item) => {
     setActiveItem(item.id);
     navigate(item.path);
-  }
+  };
 
   return (
     <div className="sidebar">

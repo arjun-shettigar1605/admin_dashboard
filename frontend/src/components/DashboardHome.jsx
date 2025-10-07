@@ -23,13 +23,13 @@ const DashboardHome = () => {
         >
           <div className="tile-image-container">
             <img
-              src={utilityblacknwhite}
-              alt="Geospatial"
+              src={geospatialblacknwhite}
+              alt="Utilities"
               className="tile-image default-image"
             />
             <img
-              src={utility}
-              alt="Geospatial Hover"
+              src={geospatial}
+              alt="Utilities Hover"
               className="tile-image hover-image"
             />
           </div>
@@ -45,13 +45,13 @@ const DashboardHome = () => {
         >
           <div className="tile-image-container">
             <img
-              src={geospatialblacknwhite}
-              alt="Utilities"
+              src={utilityblacknwhite}
+              alt="Geospatial"
               className="tile-image default-image"
             />
             <img
-              src={geospatial}
-              alt="Utilities Hover"
+              src={utility}
+              alt="Geospatial Hover"
               className="tile-image hover-image"
             />
           </div>

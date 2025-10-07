@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-// import ProjectTable from "./ProjectTable";
 import "../styles/Dashboard.css";
 import { Outlet, useLocation} from "react-router-dom";
 
@@ -32,8 +31,8 @@ const Dashboard = ({ setIsLoggedIn }) => {
     <div className="dashboard-layout">
       <Sidebar activeItem={activeMenuItem} setActiveItem={setActiveMenuItem} />
       <div className="main-content">
-        <Header setIsLoggedIn={setIsLoggedIn} activeMenuItem={activeMenuItem} />
-        <div className="content-area">  
+        <Header activeMenuItem={activeMenuItem} />
+        <div className="content-area">
           <Outlet />
         </div>
       </div>

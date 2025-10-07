@@ -1,11 +1,13 @@
 import React, { useState, useMemo, useRef } from "react";
 import countriesData from "../data/countriesminified.json";
+import api from "../api/axios";
 import projectsData from "../data/projects.json"; // Using centralized data
 import { Plus, FolderEdit, Trash2 } from "lucide-react";
 import ConfirmationPopup from "./ConfirmationPopup";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import AddProject from "./AddProject";
+import Pagination from "./Pagination";
 
 const ProjectTable2 = () => {
   const [activeTab, setActiveTab] = useState("regions");
@@ -16,6 +18,10 @@ const ProjectTable2 = () => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [projectToEdit, setProjectToEdit] = useState(null);
+  const [projects, setProjects] = useState([]); 
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1); 
+  const ROWS_PER_PAGE = 10;
 
   const btnRef = useRef(null);
 
@@ -53,7 +59,45 @@ const ProjectTable2 = () => {
       .sort();
   }, [selectedRegion]);
 
-  const projects = useMemo(() => projectsData, []);
+  // const projects = useMemo(() => projectsData, []);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get("/projects");
+      // Map backend data to match frontend field names
+      const formattedProjects = res.data.map((p) => ({
+        id: p.Project_Id,
+        projectName: p.ProjectName,
+        projectManager: p.ProjectManager,
+        duration: p.Duration,
+        status: p.Status,
+        progress: p.Progress,
+        clientName: p.ClientName,
+        country: p.Country,
+        link: p.ProjectLink,
+        type: p.ProjectType,
+        location: p.Location,
+        CreatedAtDate: p.CreatedAtDate,
+        // Add any other fields your component expects
+      }));
+      setProjects(formattedProjects);
+    } catch (err) {
+      console.error("Failed to fetch projects:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  // reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, selectedRegion, selectedCountry]);
 
   // --- Status Helpers ---
   const getStatusClass = (status) => {
@@ -78,26 +122,19 @@ const ProjectTable2 = () => {
     }
   };
 
-  const handleViewProject = (projectId) => {
-    const project = projects.find((p) => p.id === projectId);
-    if (project && project.link) {
-      window.open(project.link, "_blank");
+  const handleViewProject = (link) => {
+    if (link) {
+      window.open(link, "_blank");
     } else {
-      console.error("Project link not found for ID:", projectId);
-      // Fallback to a default link if needed
-      window.open("https://cyient.com/projects", "_blank");
+      alert("Project link not found.");
     }
   };
 
   // Modify handleEdit to use modal instead of navigation
   const handleEdit = (projectId) => {
     const project = projects.find((p) => p.id === projectId);
-    if (project) {
-      setProjectToEdit(project);
-      setShowEditForm(true);
-    } else {
-      alert("Project not found!");
-    }
+    setProjectToEdit(project);
+    setShowEditForm(true);
   };
 
   const handleDeleteClick = (projectId) => {
@@ -119,11 +156,19 @@ const ProjectTable2 = () => {
     setShowDeletePopup(true);
   };
 
-  const handleConfirmDelete = () => {
-    // In a real app, you would filter the projects state here
-    console.log("Deleting projects with IDs:", selectedProjects);
-    setShowCheckboxes(false);
-    setSelectedProjects([]);
+  const handleConfirmDelete = async () => {
+    try {
+      // Send DELETE request with the array of selected IDs
+      await api.delete("/projects", { data: { ids: selectedProjects } });
+      handleCancelDelete(); // Close the popup
+      // Refresh the data to show changes
+      fetchProjects();
+      setShowCheckboxes(false);
+      setSelectedProjects([]);
+    } catch (err) {
+      console.error("Failed to delete projects:", err);
+      alert("An error occurred while deleting.");
+    }
   };
 
   const handleCancelDelete = () => {
@@ -159,6 +204,14 @@ const ProjectTable2 = () => {
     return projects;
   }, [activeTab, projects, selectedRegion, selectedCountry, countryOptions]);
 
+
+  const paginatedProjects = useMemo(() => {
+    const indexOfLastRow = currentPage * ROWS_PER_PAGE;
+    const indexOfFirstRow = indexOfLastRow - ROWS_PER_PAGE;
+    return filteredProjects.slice(indexOfFirstRow, indexOfLastRow);
+  }, [filteredProjects, currentPage]);
+
+
   const deleteMessage = `Are you sure you want to delete the selected project${
     selectedProjects.length > 1 ? "s" : ""
   }? This action cannot be undone.`;
@@ -174,6 +227,7 @@ const ProjectTable2 = () => {
         <AddProject
           projectData={projectToEdit}
           closeForm={() => setShowEditForm(false)}
+          onSave={fetchProjects}
         />
       </Popup>
 
@@ -348,8 +402,8 @@ const ProjectTable2 = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredProjects.length > 0 ? (
-                filteredProjects.map((project) => (
+              {paginatedProjects.length > 0 ? (
+                paginatedProjects.map((project) => (
                   <tr key={project.id}>
                     {showCheckboxes && (
                       <td className="checkbox-column sticky-col sticky-checkbox">
@@ -389,7 +443,7 @@ const ProjectTable2 = () => {
                     <td className="sticky-col sticky-overview">
                       <button
                         className="view-project-btn"
-                        onClick={() => handleViewProject(project.id)}
+                        onClick={() => handleViewProject(project.link)}
                       >
                         View Project
                       </button>
@@ -423,6 +477,14 @@ const ProjectTable2 = () => {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalRows={filteredProjects.length}
+          rowsPerPage={ROWS_PER_PAGE}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+        
       </div>
     </>
   );

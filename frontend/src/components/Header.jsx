@@ -1,13 +1,13 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, User, LogOut } from "lucide-react"; 
+import { useAuth } from "../context/AuthContext";
 
-const Header = ({ setIsLoggedIn, activeMenuItem }) => {
-  const navigate = useNavigate();
+const Header = ({ activeMenuItem }) => {
+  const { logout } = useAuth();
 
   const handleSignout = () => {
-    setIsLoggedIn(false);
-    navigate("/login");
+    logout();
   };
 
   const getPageTitle = () => {
@@ -22,7 +22,7 @@ const Header = ({ setIsLoggedIn, activeMenuItem }) => {
         return "Reports";
       case "admin":
         return "Admin";
-      case "support":
+      case "support":  
         return "Support";
       default:
         return "Dashboard";

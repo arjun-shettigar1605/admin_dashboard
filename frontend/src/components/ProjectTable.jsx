@@ -1,12 +1,13 @@
 // src/components/ProjectTable.jsx
 
 import React, { useState, useEffect, useMemo } from "react";
+import api from "../api/axios";
 import countriesData from "../data/countriesminified.json"; // Local JSON
 import { useParams, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-import projects from "../data/projects.json";
+import L from "leaflet";  
+import Pagination from "./Pagination";
 
 // Fix for default markers in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -64,9 +65,13 @@ const FitBounds = ({ bounds }) => {
 const ProjectTable = () => {
   const { projectType } = useParams();
   const [activeTab, setActiveTab] = useState("regions");
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [clientLocations, setClientLocations] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ROWS_PER_PAGE = 10;
 
   const navigate = useNavigate();
 
@@ -118,20 +123,55 @@ const ProjectTable = () => {
 
   const regionOptions = Object.keys(newRegions);
 
+  // Filter projects by projectType first for region filtering
+  const projectTypeFilteredProjects = useMemo(() => {
+    return projects.filter(
+      (p) => p.type.toLowerCase() === projectType.toLowerCase()
+    );
+  }, [projects, projectType]);
+
   const countryOptions = useMemo(() => {
     if (!selectedRegion) return [];
-    return countriesData
+
+    // Get all countries that match the region definition
+    const regionCountries = countriesData
       .filter((country) => newRegions[selectedRegion](country))
-      .map((c) => c.name)
+      .map((c) => c.name);
+
+    // Filter to only show countries that have projects of the selected projectType
+    const countriesWithProjects = new Set(
+      projectTypeFilteredProjects.map((p) => p.country)
+    );
+
+    return regionCountries
+      .filter((country) => countriesWithProjects.has(country))
       .sort();
-  }, [selectedRegion]);
+  }, [selectedRegion, projectTypeFilteredProjects]);
 
   useEffect(() => {
-    const projectWithClients = projects.find(
-      (p) => p.country === selectedCountry && p.clients
-    );
-    setClientLocations(projectWithClients ? projectWithClients.clients : []);
-  }, [selectedCountry]);
+    if (projectTypeFilteredProjects && selectedCountry) {
+      // Use flatMap to get all clients from projects of selected projectType in the selected country
+      const allClients = projectTypeFilteredProjects.flatMap((p) =>
+        p.country === selectedCountry && p.location && p.location.clients
+          ? p.location.clients
+          : []
+      );
+      setClientLocations(allClients);
+    }
+  }, [projectTypeFilteredProjects, selectedCountry]);
+  
+  // resets to page 1 whenever a new filter is applied
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, selectedRegion, selectedCountry, projectType]);
+
+  // memo for pagination
+  const paginatedProjects = useMemo(() => {  
+    const indexOfLastRow = currentPage * ROWS_PER_PAGE;
+    const indexOfFirstRow = indexOfLastRow - ROWS_PER_PAGE;
+    return filteredProjects.slice(indexOfFirstRow, indexOfLastRow);
+  }, [filteredProjects, currentPage]);
+
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -161,23 +201,60 @@ const ProjectTable = () => {
       window.open(project.link, "_blank");
     } else {
       console.error("Project link not found for ID:", projectId);
-      // Fallback to a default link if needed
       window.open("https://cyient.com/projects", "_blank");
     }
   };
 
-  // Corrected filtering logic
-  const filteredProjects = useMemo(() => {
-    let projectsToFilter = projects;
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get("/projects");
+        // Map backend data to match frontend expectations
+        const formattedProjects = res.data.map((p) => ({
+          id: p.Project_Id,
+          projectName: p.ProjectName,
+          projectManager: p.ProjectManager,
+          duration: p.Duration,
+          status: p.Status,
+          progress: p.Progress,
+          clientName: p.ClientName,
+          country: p.Country,
+          link: p.ProjectLink,
+          type: p.ProjectType,
+          location: p.Location,
+          createdAtDate: p.CreatedAtDate,
+        }));
+        setProjects(formattedProjects);
+      } catch (err) {
+        console.error("Failed to fetch projects:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
 
+  // Corrected filtering logic - Always filter by projectType first
+  const filteredProjects = useMemo(() => {
+    // Start with projectType-filtered projects
+    let projectsToFilter = projectTypeFilteredProjects;
+
+    // Then apply tab-specific filters
     if (activeTab === "ongoing") {
-      projectsToFilter = projects.filter((p) => p.status === "in-progress");
+      projectsToFilter = projectsToFilter.filter(
+        (p) => p.status === "in-progress"
+      );
     } else if (activeTab === "completed") {
-      projectsToFilter = projects.filter((p) => p.status === "completed");
+      projectsToFilter = projectsToFilter.filter(
+        (p) => p.status === "completed"
+      );
     } else if (activeTab === "regions") {
       if (selectedRegion) {
         const countrySet = new Set(countryOptions);
-        projectsToFilter = projects.filter((p) => countrySet.has(p.country));
+        projectsToFilter = projectsToFilter.filter((p) =>
+          countrySet.has(p.country)
+        );
       }
       if (selectedCountry) {
         projectsToFilter = projectsToFilter.filter(
@@ -186,20 +263,12 @@ const ProjectTable = () => {
       }
     }
 
-    // Only apply the projectType filter if the active tab is NOT 'regions'
-    if (activeTab !== "regions") {
-      return projectsToFilter.filter(
-        (p) => p.type.toLowerCase() === projectType.toLowerCase()
-      );
-    }
-
     return projectsToFilter;
   }, [
+    projectTypeFilteredProjects,
     activeTab,
-    // projects,
     selectedRegion,
     selectedCountry,
-    projectType,
     countryOptions,
   ]);
 
@@ -211,18 +280,30 @@ const ProjectTable = () => {
   }, [activeTab, selectedCountry, filteredProjects]);
 
   const mapBounds = useMemo(() => {
-    const projectCoords = selectedCountryProjects.map((p) => [
-      p.location.coordinates.lat,
-      p.location.coordinates.lng,
-    ]);
-    const clientCoords = clientLocations.map((c) => [
-      c.coordinates.lat,
-      c.coordinates.lng,
-    ]);
+    // Safely get project coordinates by checking for the 'lat' property
+    const projectCoords = selectedCountryProjects
+      .map((p) => {
+        const coords = p.location?.main_location?.coordinates;
+        if (coords && coords.lat && coords.lon) {
+          return [coords.lat, coords.lon];
+        }
+        return null;
+      })
+      .filter(Boolean);
+    const clientCoords = clientLocations
+      .map((c) => {
+        const coords = c.coordinates;
+        if (coords && coords.lat && coords.lon) {
+          return [coords.lat, coords.lon];
+        }
+        return null;
+      })
+      .filter(Boolean);
+
     return [...projectCoords, ...clientCoords];
   }, [selectedCountryProjects, clientLocations]);
 
-  // Check if we should show the map
+  // Check if we should show the map - ONLY in regions tab
   const shouldShowMap =
     activeTab === "regions" &&
     selectedCountry &&
@@ -326,8 +407,8 @@ const ProjectTable = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredProjects.length > 0 ? (
-              filteredProjects.map((project) => (
+            {paginatedProjects.length > 0 ? (
+              paginatedProjects.map((project) => (
                 <tr key={project.id}>
                   <td>{project.projectName}</td>
                   <td>{project.projectManager}</td>
@@ -374,7 +455,7 @@ const ProjectTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="12" style={{ textAlign: "center" }}>
+                <td colSpan="11" style={{ textAlign: "center" }}>
                   No projects found
                 </td>
               </tr>
@@ -382,6 +463,13 @@ const ProjectTable = () => {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalRows={filteredProjects.length}
+        rowsPerPage={ROWS_PER_PAGE}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
 
       {shouldShowMap && (
         <div className="map-section" style={{ marginTop: "2rem" }}>
@@ -395,10 +483,7 @@ const ProjectTable = () => {
             }}
           >
             <MapContainer
-              center={[
-                selectedCountryProjects[0].location.coordinates.lat,
-                selectedCountryProjects[0].location.coordinates.lng,
-              ]}
+              center={mapBounds.length > 0 ? mapBounds[0] : [20, 0]}
               zoom={6}
               style={{ height: "100%", width: "100%" }}
             >
@@ -407,72 +492,76 @@ const ProjectTable = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
               />
               <FitBounds bounds={mapBounds} />
-              {selectedCountryProjects.map((project) => (
-                <Marker
-                  key={project.id}
-                  position={[
-                    project.location.coordinates.lat,
-                    project.location.coordinates.lng,
-                  ]}
-                  icon={createCustomIcon(project.status)}
-                >
-                  <Popup>
-                    <div style={{ minWidth: "200px" }}>
-                      <h4 style={{ margin: "0 0 8px 0", color: "#333" }}>
-                        {project.projectName}
-                      </h4>
-                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                        <strong>Manager:</strong> {project.projectManager}
-                      </p>
-                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                        <strong>Client:</strong> {project.clientName}
-                      </p>
-                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                        <strong>Status:</strong>
-                        <span
-                          className={`status ${getStatusClass(project.status)}`}
-                          style={{ marginLeft: "5px" }}
-                        >
-                          {getStatusText(project.status)}
-                        </span>
-                      </p>
-                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                        <strong>Progress:</strong> {project.progress}%
-                      </p>
-                      <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
-                        <strong>Location:</strong> {project.location.city}
-                      </p>
-                      <p
-                        style={{
-                          margin: "4px 0 8px 0",
-                          fontSize: "0.8rem",
-                          color: "#666",
-                        }}
-                      >
-                        {project.location.address}
-                      </p>
-                      <button
-                        onClick={() => handleViewProject(project.id)}
-                        style={{
-                          padding: "4px 8px",
-                          fontSize: "0.8rem",
-                          border: "1px solid #007bff",
-                          borderRadius: "4px",
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          cursor: "pointer",
-                        }}
-                      >
-                        View Details
-                      </button>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
+              {selectedCountryProjects
+                .filter((p) => p.location?.main_location?.coordinates?.lat)
+                .map((project) => {
+                  const coords = project.location.main_location.coordinates;
+                  return (
+                    <Marker
+                      key={project.id}
+                      position={[coords.lat, coords.lon]}
+                      icon={createCustomIcon(project.status)}
+                    >
+                      <Popup>
+                        <div style={{ minWidth: "200px" }}>
+                          <h4 style={{ margin: "0 0 8px 0", color: "#333" }}>
+                            {project.projectName}
+                          </h4>
+                          <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                            <strong>Manager:</strong> {project.projectManager}
+                          </p>
+                          <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                            <strong>Client:</strong> {project.clientName}
+                          </p>
+                          <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                            <strong>Status:</strong>
+                            <span
+                              className={`status ${getStatusClass(
+                                project.status
+                              )}`}
+                              style={{ marginLeft: "5px" }}
+                            >
+                              {getStatusText(project.status)}
+                            </span>
+                          </p>
+                          <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                            <strong>Progress:</strong> {project.progress}%
+                          </p>
+                          <p style={{ margin: "4px 0", fontSize: "0.9rem" }}>
+                            <strong>Location:</strong> {project.location.city}
+                          </p>
+                          <p
+                            style={{
+                              margin: "4px 0 8px 0",
+                              fontSize: "0.8rem",
+                              color: "#666",
+                            }}
+                          >
+                            {project.location.address}
+                          </p>
+                          <button
+                            onClick={() => handleViewProject(project.id)}
+                            style={{
+                              padding: "4px 8px",
+                              fontSize: "0.8rem",
+                              border: "1px solid #007bff",
+                              borderRadius: "4px",
+                              backgroundColor: "#007bff",
+                              color: "white",
+                              cursor: "pointer",
+                            }}
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                })}
               {clientLocations.map((client, index) => (
                 <Marker
                   key={`client-${index}`}
-                  position={[client.coordinates.lat, client.coordinates.lng]}
+                  position={[client.coordinates.lat, client.coordinates.lon]}
                   icon={createClientIcon()}
                 >
                   <Popup>

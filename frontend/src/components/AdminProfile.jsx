@@ -3,7 +3,6 @@ import {
   User,
   Shield,
   Settings,
-  Bell,
   Camera,
   Save,
   Edit3,
@@ -11,47 +10,79 @@ import {
 } from "lucide-react";
 import "../styles/AdminProfilePage.css";
 
+import api from "../api/axios"; 
+import ChangePasswordModal from "./ChangePasswordModal";  
+
 export default function AdminProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+
   const [formData, setFormData] = useState({
-    firstName: "Sarah",
-    lastName: "Johnson",
-    email: "sarah.johnson@company.com",
-    phone: "+1 (555) 123-4567",
-    location: "New York, NY",
-    role: "System Administrator",
-    department: "IT Operations",
-    joinDate: "2022-03-15",
-    bio: "Experienced system administrator with 8+ years in enterprise infrastructure management and cybersecurity.",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    location: "",
+    role: "",
+    department: "",
+    joinDate: "",
+    bio: "",
   });
 
-  const [notifications, setNotifications] = useState({
-    email: true,
-    push: false,
-    sms: true,
-    security: true,
-  });
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        setLoading(true);
+        const { data } = await api.get("/users/profile");
+        // Map snake_case from DB to camelCase for the form
+        setFormData({
+          firstName: data.first_name || "",
+          lastName: data.last_name || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          location: data.location || "",
+          role: data.role || "",
+          department: data.department || "",
+          joinDate: data.join_date || "",
+          bio: data.bio || "",
+        });
+      } catch (err) {
+        console.error("Failed to fetch user profile", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserProfile();
+  }, []); 
+
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleNotificationChange = (type) => {
-    setNotifications((prev) => ({ ...prev, [type]: !prev[type] }));
-  };
-
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log("Profile saved:", formData);
+  const handleSave = async () => {
+    try{
+      await api.put('/users/profile', formData);
+      setIsEditing(false);
+    }
+    catch(err){
+      console.error(err);
+    }
   };
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
     { id: "security", label: "Security", icon: Shield },
-    { id: "notifications", label: "Notifications", icon: Bell },
     { id: "settings", label: "Settings", icon: Settings },
   ];
+
+  if (loading) {
+    return <div className="admin-page-container">Loading profile...</div>;
+  }
+
 
   const renderProfileTab = () => (
     <div className="tab-pane">
@@ -109,8 +140,7 @@ export default function AdminProfilePage() {
           <input
             type="email"
             value={formData.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-            disabled={!isEditing}
+            disabled
             className="input-field"
           />
         </div>
@@ -187,7 +217,12 @@ export default function AdminProfilePage() {
           <h4>Password</h4>
           <p>Last changed 3 months ago</p>
         </div>
-        <button className="btn-primary-blue">Change Password</button>
+        <button
+          onClick={() => setShowPasswordModal(true)}
+          className="btn-primary-blue"
+        >
+          Change Password
+        </button>
       </div>
       <div className="list-item">
         <div>
@@ -203,36 +238,6 @@ export default function AdminProfilePage() {
         </div>
         <button className="btn-secondary">View Sessions</button>
       </div>
-    </div>
-  );
-
-  const renderNotificationsTab = () => (
-    <div className="tab-pane">
-      <h3
-        style={{
-          fontSize: "1.125rem",
-          fontWeight: 600,
-          marginBottom: "1.5rem",
-        }}
-      >
-        Notification Preferences
-      </h3>
-      {Object.entries(notifications).map(([key, value]) => (
-        <div key={key} className="list-item">
-          <div>
-            <h4 style={{ textTransform: "capitalize" }}>
-              {key === "sms" ? "SMS" : key} Notifications
-            </h4>
-            <p>Receive {key} notifications for important updates</p>
-          </div>
-          <button
-            onClick={() => handleNotificationChange(key)}
-            className={`toggle-switch ${value ? "on" : "off"}`}
-          >
-            <span className="toggle-switch-handle" />
-          </button>
-        </div>
-      ))}
     </div>
   );
 
@@ -284,66 +289,68 @@ export default function AdminProfilePage() {
   );
 
   return (
-    <div className="admin-page-container">
-      <div className="admin-page-content">
-        <header className="admin-page-header">
-          <h1>Admin Profile</h1>
-          <p>Manage your account settings and preferences</p>
-        </header>
+    <>
+      {showPasswordModal && <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />}
+      <div className="admin-page-container">
+        <div className="admin-page-content">
+          <header className="admin-page-header">
+            <h1>Admin Profile</h1>
+            <p>Manage your account settings and preferences</p>
+          </header>
 
-        <main className="main-card">
-          <nav className="tab-navigation">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`tab-item ${activeTab === tab.id ? "active" : ""}`}
-                >
-                  <Icon size={16} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-          <div className="tab-content">
-            {activeTab === "profile" && renderProfileTab()}
-            {activeTab === "security" && renderSecurityTab()}
-            {activeTab === "notifications" && renderNotificationsTab()}
-            {activeTab === "settings" && renderSettingsTab()}
-          </div>
-        </main>
+          <main className="main-card">
+            <nav className="tab-navigation">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`tab-item ${activeTab === tab.id ? "active" : ""}`}
+                  >
+                    <Icon size={16} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+            <div className="tab-content">
+              {activeTab === "profile" && renderProfileTab()}
+              {activeTab === "security" && renderSecurityTab()}
+              {activeTab === "settings" && renderSettingsTab()}
+            </div>
+          </main>
 
-        <section className="quick-stats-grid">
-          <div className="stat-card">
-            <Calendar className="icon-blue" />
-            <div className="stat-info">
-              <p className="stat-label">Member Since</p>
-              <p className="stat-value">
-                {new Date(formData.joinDate).toLocaleDateString("en-US", {
-                  month: "short",
-                  year: "numeric",
-                })}
-              </p>
+          <section className="quick-stats-grid">
+            <div className="stat-card">
+              <Calendar className="icon-blue" />
+              <div className="stat-info">
+                <p className="stat-label">Member Since</p>
+                <p className="stat-value">
+                  {new Date(formData.joinDate).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="stat-card">
-            <Shield className="icon-green" />
-            <div className="stat-info">
-              <p className="stat-label">Security Score</p>
-              <p className="stat-value">85%</p>
+            <div className="stat-card">
+              <Shield className="icon-green" />
+              <div className="stat-info">
+                <p className="stat-label">Security Score</p>
+                <p className="stat-value">85%</p>
+              </div>
             </div>
-          </div>
-          <div className="stat-card">
-            <User className="icon-purple" />
-            <div className="stat-info">
-              <p className="stat-label">Role Level</p>
-              <p className="stat-value">Admin</p>
+            <div className="stat-card">
+              <User className="icon-purple" />
+              <div className="stat-info">
+                <p className="stat-label">Role Level</p>
+                <p className="stat-value">Admin</p>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
